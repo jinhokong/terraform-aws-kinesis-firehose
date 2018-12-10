@@ -22,19 +22,6 @@ resource "aws_kinesis_firehose_delivery_stream" "kinesis_firehose_stream" {
       }
     }
 
-    processing_configuration {
-      enabled = true
-
-      processors = [{
-        type = "Lambda"
-
-        parameters = [{
-          parameter_name  = "LambdaArn"
-          parameter_value = "${aws_lambda_function.lambda_kinesis_firehose_data_transformation.arn}:$LATEST"
-        }]
-      }]
-    }
-
     cloudwatch_logging_options {
       enabled         = true
       log_group_name  = "${aws_cloudwatch_log_group.kinesis_firehose_stream_logging_group.name}"
@@ -79,39 +66,6 @@ resource "aws_s3_bucket" "kinesis_firehose_stream_bucket" {
 
 locals {
   path_prefix = "${var.root_path == true ? path.root : path.module}/functions"
-}
-
-data "null_data_source" "lambda_file" {
-  inputs {
-    filename = "${substr("${local.path_prefix}/${var.lambda_function_file_name}.py", length(path.cwd) + 1, -1)}"
-  }
-}
-
-data "null_data_source" "lambda_archive" {
-  inputs {
-    filename = "${substr("${local.path_prefix}/${var.lambda_function_file_name}.zip", length(path.cwd) + 1, -1)}"
-  }
-}
-
-data "archive_file" "kinesis_firehose_data_transformation" {
-  type        = "zip"
-  source_file = "${data.null_data_source.lambda_file.outputs.filename}"
-  output_path = "${data.null_data_source.lambda_archive.outputs.filename}"
-}
-
-resource "aws_cloudwatch_log_group" "lambda_function_logging_group" {
-  name = "/aws/lambda/${var.lambda_function_name}"
-}
-
-resource "aws_lambda_function" "lambda_kinesis_firehose_data_transformation" {
-  filename      = "${data.archive_file.kinesis_firehose_data_transformation.0.output_path}"
-  function_name = "${var.lambda_function_name}"
-
-  role             = "${aws_iam_role.lambda.arn}"
-  handler          = "${var.lambda_function_file_name}.lambda_handler"
-  source_code_hash = "${data.archive_file.kinesis_firehose_data_transformation.0.output_base64sha256}"
-  runtime          = "python3.6"
-  timeout          = 60
 }
 
 resource "aws_glue_catalog_database" "glue_catalog_database" {
