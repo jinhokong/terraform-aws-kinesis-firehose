@@ -95,14 +95,3 @@ resource "aws_glue_catalog_table" "glue_catalog_table" {
     columns = "${var.glue_catalog_table_columns}"
   }
 }
-
-resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_subscription_filter" {
-  name           = "${var.cloudwatch_subscription_filter_name}"
-  log_group_name = "${var.cloudwatch_log_group_name}"
-  filter_pattern = "${var.cloudwatch_filter_pattern}"
-
-  destination_arn = "${aws_kinesis_firehose_delivery_stream.kinesis_firehose_stream.arn}"
-  distribution    = "ByLogStream"
-
-  role_arn = "${aws_iam_role.cloudwatch_logs_role.arn}"
-}

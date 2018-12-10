@@ -1,6 +1,6 @@
 variable "region" {
   description = "AWS region"
-  default     = ""
+  default     = "ap-northeast-2"
 }
 
 variable "kinesis_firehose_stream_name" {
@@ -27,16 +27,4 @@ variable "glue_catalog_table_name" {
 variable "glue_catalog_table_columns" {
   description = "A list of table columns"
   type        = "list"
-}
-
-variable "cloudwatch_subscription_filter_name" {
-  description = "The subscription filter name"
-}
-
-variable "cloudwatch_log_group_name" {
-  description = "The cloudwatch log group name"
-}
-
-variable "cloudwatch_filter_pattern" {
-  description = "The cloudwatch filter pattern"
 }
