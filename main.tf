@@ -14,18 +14,6 @@ resource "aws_kinesis_firehose_delivery_stream" "kinesis_firehose_stream" {
       role_arn   = "${aws_iam_role.kinesis_firehose_stream_role.arn}"
       bucket_arn = "${aws_s3_bucket.kinesis_firehose_stream_bucket.arn}"
       prefix     = "${var.kinesis_firehose_stream_backup_prefix}"
-
-      cloudwatch_logging_options {
-        enabled         = true
-        log_group_name  = "${aws_cloudwatch_log_group.kinesis_firehose_stream_logging_group.name}"
-        log_stream_name = "${aws_cloudwatch_log_stream.kinesis_firehose_stream_logging_stream.name}"
-      }
-    }
-
-    cloudwatch_logging_options {
-      enabled         = true
-      log_group_name  = "${aws_cloudwatch_log_group.kinesis_firehose_stream_logging_group.name}"
-      log_stream_name = "${aws_cloudwatch_log_stream.kinesis_firehose_stream_logging_stream.name}"
     }
 
     data_format_conversion_configuration {
@@ -48,15 +36,6 @@ resource "aws_kinesis_firehose_delivery_stream" "kinesis_firehose_stream" {
       }
     }
   }
-}
-
-resource "aws_cloudwatch_log_group" "kinesis_firehose_stream_logging_group" {
-  name = "/aws/kinesisfirehose/${var.kinesis_firehose_stream_name}"
-}
-
-resource "aws_cloudwatch_log_stream" "kinesis_firehose_stream_logging_stream" {
-  log_group_name = "${aws_cloudwatch_log_group.kinesis_firehose_stream_logging_group.name}"
-  name           = "S3Delivery"
 }
 
 resource "aws_s3_bucket" "kinesis_firehose_stream_bucket" {
