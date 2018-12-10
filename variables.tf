@@ -22,10 +22,12 @@ variable "bucket_name" {
 }
 
 variable "lambda_function_name" {
+  default     = ""
   description = "The lambda function name"
 }
 
 variable "lambda_function_file_name" {
+  default     = ""
   description = "The lambda function file name"
 }
 
