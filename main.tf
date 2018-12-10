@@ -64,10 +64,6 @@ resource "aws_s3_bucket" "kinesis_firehose_stream_bucket" {
   acl    = "private"
 }
 
-locals {
-  path_prefix = "${var.root_path == true ? path.root : path.module}/functions"
-}
-
 resource "aws_glue_catalog_database" "glue_catalog_database" {
   name = "${var.glue_catalog_database_name}"
 }
